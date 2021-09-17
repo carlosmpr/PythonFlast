@@ -121,3 +121,69 @@ The application factory holds any configuration, registration, and other setup t
 >g It is used to store data that might be accessed by multiple functions during the request.
 
 >current_app get_db will be called when the application has been created and is handling a request, so current_app can be used.
+
+# Create the Tables
+
+1. Create a new file in flaskr call schema.sql
+
+2. Add SQL to create the table info
+    
+        DROP TABLE IF EXISTS user;
+        DROP TABLE IF EXISTS post;
+
+        CREATE TABLE user (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        );
+
+        CREATE TABLE post (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            author_id INTEGER NOT NULL,
+            created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            title TEXT NOT NULL,
+            body TEXT NOT NULL,
+            FOREIGN KEY (author_id) REFERENCES user (id)
+        );
+3. Go back to db.py an add the functions that will run the SQL Commands add the top.
+
+        def init_db():
+            db = get_db()
+            with current_app.open_resource('schema.sql') as f:
+                db.executescript(f.read().decode('utf8'))
+
+        @click.command('init-db')
+        @with_appcontext
+        def init_db_command():
+        """Clear the existing data and create new tables."""
+            init_db()
+            click.echo('Initialized the database.')
+
+4. After the close_db write a function that takes an application and does the registration.
+
+        def init_app(app):
+            app.teardown_appcontext(close_db)
+            app.cli.add_command(init_db_command)
+
+5. Go back to the 
+        
+        __init__.py 
+
+    - import the db info:
+
+            from . import db
+
+    - add the function to the end to register the database
+
+            db.init_app(app)
+
+6. Initialize the Database File
+
+        flask init-db
+>There will now be a flaskr.sqlite file in the instance folder in your project.
+
+
+
+
+
+
