@@ -48,3 +48,48 @@ Before running you need to tell your terminal the application to work with by ex
 Then run:
 
     flask run
+
+# Flask Advance Conifg
+
+
+## Aplication Factory
+
+The application factory holds any configuration, registration, and other setup the application needs.
+
+1. make new directory
+
+        mkdir flaskr
+
+2. create a new file
+
+        __init__.py
+    >it will contain the application factory, and it tells Python that the flaskr directory should be treated as a package.
+
+3. Create and configure the app
+
+        def create_app(test_config=None):
+            app = Flask(__name__, instance_relative_config=True)
+            app.config.from_mapping(
+            SECRET_KEY='dev',
+            DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        )
+4. Ensure the instance folder exists
+
+        try:
+            os.makedirs(app.instance_path)
+        except OSError:
+            pass
+
+5. Define your routes
+
+        @app.route('/hello')
+        def hello():
+            return 'Hello, World!'
+        return app
+
+6. Change the env varibles 
+
+        export FLASK_APP=flaskr
+        export FLASK_ENV=development
+
+
