@@ -92,4 +92,32 @@ The application factory holds any configuration, registration, and other setup t
         export FLASK_APP=flaskr
         export FLASK_ENV=development
 
+# Connect to the Database
 
+1. Create a new file flaskr/db.py
+2. Add the configuration:
+
+        import sqlite3
+        import click
+
+        from flask import current_app, g
+        from flask.cli import with_appcontext
+
+
+        def get_db():
+            if 'db' not in g:
+                g.db = sqlite3.connect(
+                current_app.config['DATABASE'],
+                detect_types=sqlite3.PARSE_DECLTYPES
+            )
+            g.db.row_factory = sqlite3.Row
+            return g.db
+
+
+        def close_db(e=None):
+            db = g.pop('db', None)
+            if db is not None:
+            db.close()
+>g It is used to store data that might be accessed by multiple functions during the request.
+
+>current_app get_db will be called when the application has been created and is handling a request, so current_app can be used.
