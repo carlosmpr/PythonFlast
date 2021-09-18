@@ -2,11 +2,11 @@
 
 # Flask configurations and first step
 
-### Setting Virtual envirotment  
+### Setting Virtual environment  
 Virtual environments are independent groups of Python libraries, one for each project. Packages installed for one project will not affect other projects or the operating system’s packages.
 
 ## Create an environment
-1. First create a project folder and a venv folder withim
+1. First create a project folder and a venv folder within
 
         mkdir myproject
         cd myproject
@@ -41,7 +41,7 @@ We then use the route() decorator to tell Flask what URL should trigger our func
     def hello_world():
     return "<p>Hello, World!</p>"
 
-# Run the Aplication on MAC/Linux
+# Run the Application on MAC/Linux
 Before running you need to tell your terminal the application to work with by exporting the FLASK_APP environment variable:
 
     export FLASK_APP=hello
@@ -49,10 +49,10 @@ Then run:
 
     flask run
 
-# Flask Advance Conifg
+# Flask Advance Config
 
 
-## Aplication Factory
+## Application Factory
 
 The application factory holds any configuration, registration, and other setup the application needs.
 
@@ -87,7 +87,7 @@ The application factory holds any configuration, registration, and other setup t
             return 'Hello, World!'
         return app
 
-6. Change the env varibles 
+6. Change the env variables 
 
         export FLASK_APP=flaskr
         export FLASK_ENV=development
@@ -217,7 +217,7 @@ A Blueprint is a way to organize a group of related views and other code. Rather
 
             app.register_blueprint(auth.bp)
 
-4. Inside auth.py add the sign up/register function:
+4. Inside auth.py add the sign-up/register function:
 
         @bp.route('/register', methods=('GET', 'POST'))
         def register():
@@ -292,6 +292,74 @@ A Blueprint is a way to organize a group of related views and other code. Rather
 
          return wrapped_view
 
+# Create The Template Views
+
+1. Create a template folder inside your project directory.
+2. Create a base.html inside the templates folder
+      
+        <!doctype html>
+            <title>{% block title %}{% endblock %} - Flaskr</title>
+            <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+        <nav>
+            <h1>Flaskr</h1>
+            <ul>
+                {% if g.user %}
+                    <li><span>{{ g.user['username'] }}</span>
+                    <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+                {% else %}
+                    <li><a href="{{ url_for('auth.register') }}">Register</a>
+                    <li><a href="{{ url_for('auth.login') }}">Log In</a>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <section class="content">
+            <header>
+                {% block header %}{% endblock %}
+            </header>
+                {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </section>
+
+3. Inside the template folder create new auth folder an add your base html to login and register with the same name of your routes
+
+    - Register
+        
+                {% extends 'base.html' %}
+
+                {% block header %}
+                    <h1>{% block title %}Register{% endblock %}</h1>
+                {% endblock %}
+
+                {% block content %}
+                    <form method="post">
+                        <label for="username">Username</label>
+                        <input name="username" id="username" required>
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" required>
+                        <input type="submit" value="Register">
+                    </form>
+                {% endblock %}
+    - Log In
+
+                {% extends 'base.html' %}
+                {% block header %}
+                    <h1>{% block title %}Log In{% endblock %}</h1>
+                {% endblock %}
+
+                {% block content %}
+                <form method="post">
+                    <label for="username">Username</label>
+                    <input name="username" id="username" required>
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" required>
+                    <input type="submit" value="Log In">
+                </form>
+                {% endblock %}
+4. Register your user, go to http://127.0.0.1:5000/auth/register. with the server running
 
 
     
